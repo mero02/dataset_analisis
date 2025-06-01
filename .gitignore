@@ -1,17 +1,82 @@
-```gitignore
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Archivos de datos
 *.xlsx
 *.csv
 
+# Archivos de imagen
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.svg
+*.ico
+
 # Entornos virtuales
 venv/
 .env/
 .envrc
+.venv/
+ENV/
+env/
+
+# Editor e IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Archivos del sistema
 .DS_Store
 Thumbs.db
+*.db
+*.sqlite
+
+# Archivos temporales
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+
+# Archivos de log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de caché
+.cache/
+*.cache
+
+# Archivos de entorno
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Archivos de salida de debug
+*.dSYM/

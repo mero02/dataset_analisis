@@ -1,6 +1,7 @@
 import pandas as pd
 from analizar_series import construir_modelo
 from utils import limpiar_dataframe
+import matplotlib.pyplot as plt
 
 def generar_dataframes_categorias(metadatos, datos):
     """
@@ -72,5 +73,29 @@ if __name__ == '__main__':
     ])
     resumen_categorias.to_csv("resumen_por_categoria.csv", index=False)
 
+    # Gráfico de barras para tipos
+    resumen_tipos = pd.DataFrame([
+        {"tipo": tipo, "series": df['id_serie'].nunique(), "registros": len(df)}
+        for tipo, df in df_por_tipo.items()
+    ])
+    resumen_tipos.sort_values('registros', ascending=False).plot.bar(
+        x='tipo', y='registros', figsize=(10, 6), title='Registros por tipo'
+    )
+    plt.tight_layout()
+    plt.savefig('registros_por_tipo.png')
+    plt.close()
+
+    # Gráfico de barras para categorías
+    resumen_categorias = pd.DataFrame([
+        {"categoria": cat, "series": df['id_serie'].nunique(), "registros": len(df)}
+        for cat, df in df_por_categoria.items()
+    ])
+    resumen_categorias.sort_values('registros', ascending=False).plot.bar(
+        x='categoria', y='registros', figsize=(10, 6), title='Registros por categoría'
+    )
+    plt.tight_layout()
+    plt.savefig('registros_por_categoria.png')
+    plt.close()
+    
     # Mensaje final indicando que los archivos se guardaron correctamente
     print("\nResúmenes exportados a CSV: 'resumen_por_tipo.csv' y 'resumen_por_categoria.csv'")

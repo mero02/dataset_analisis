@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas import Timestamp
+import matplotlib.pyplot as plt
 
 def construir_modelo(ruta_archivo):
     libro = pd.ExcelFile(ruta_archivo)
@@ -67,6 +68,17 @@ if __name__ == '__main__':
     ruta = 'Datos_Series_Leo.xlsx'
     metadatos_series, datos_series = construir_modelo(ruta)
 
+    plt.figure(figsize=(12, 6))
+    metadatos_series['fecha_inicio'].dt.year.hist(bins=30, alpha=0.7, label='Inicio')
+    metadatos_series['fecha_fin'].dt.year.hist(bins=30, alpha=0.7, label='Fin')
+    plt.title('Distribución de fechas de inicio/fin de las series')
+    plt.xlabel('Año')
+    plt.ylabel('Cantidad de series')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('distribucion_fechas.png')
+    plt.close()
+    
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', 200)
     pd.set_option('display.max_colwidth', None)
