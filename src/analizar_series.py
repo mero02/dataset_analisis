@@ -3,6 +3,7 @@ from pandas import Timestamp
 import matplotlib.pyplot as plt
 
 def construir_modelo(ruta_archivo):
+    # Cargar el archivo Excel
     libro = pd.ExcelFile(ruta_archivo)
 
     filas_meta = []
