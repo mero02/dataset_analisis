@@ -21,8 +21,9 @@ import argparse
 import subprocess
 from pathlib import Path
 
-# Agregar src al path
+# Agregar src y scripts al path
 sys.path.append('src')
+sys.path.append('scripts')
 
 def verificar_estructura():
     """Verifica que la estructura de directorios sea correcta"""
@@ -60,7 +61,7 @@ def ejecutar_analisis():
         # Importar y ejecutar análisis
         from src.analizar_series import construir_modelo
         from src.utils import limpiar_dataframe
-        from src.generar_dataframe_categorias import generar_dataframes_categorias
+        from scripts.generar_dataframe_categorias import generar_dataframes_categorias
         
         archivo_excel = 'data/raw/Datos_Series_Leo.xlsx'
         
@@ -140,6 +141,106 @@ def abrir_notebook():
         print(f"❌ Error al abrir notebook: {e}")
         return False
 
+def generar_reportes():
+    """Genera reportes automáticos en múltiples formatos"""
+    print("📊 Generando reportes automáticos...")
+    
+    try:
+        # Importar módulos necesarios
+        from src.analizar_series import construir_modelo
+        from src.utils import limpiar_dataframe
+        from src.reportes import GeneradorReportes
+        
+        archivo_excel = 'data/raw/Datos_Series_Leo.xlsx'
+        
+        if not os.path.exists(archivo_excel):
+            print(f"❌ No se encontró el archivo: {archivo_excel}")
+            print("   Por favor, coloca el archivo en la carpeta data/raw/")
+            return False
+        
+        # Cargar y procesar datos
+        print("🔄 Cargando datos...")
+        metadatos, datos = construir_modelo(archivo_excel)
+        datos = limpiar_dataframe(datos)
+        
+        # Filtrar datos válidos
+        metadatos_validos = metadatos.dropna(subset=['tipo', 'categoria'])
+        series_validas = metadatos_validos['id_serie'].unique()
+        datos_finales = datos[datos['id_serie'].isin(series_validas)]
+        
+        # Agregar información de tipo y categoría
+        datos_finales['tipo'] = datos_finales['id_serie'].map(
+            metadatos_validos.set_index('id_serie')['tipo']
+        )
+        datos_finales['categoria'] = datos_finales['id_serie'].map(
+            metadatos_validos.set_index('id_serie')['categoria']
+        )
+        
+        # Generar reportes
+        print("🔄 Generando reportes...")
+        generador = GeneradorReportes(datos_finales, metadatos_validos)
+        
+        # Generar todos los formatos
+        archivos_generados = generador.generar_todos_formatos()
+        
+        print("✅ Reportes generados exitosamente")
+        print("📁 Archivos generados en reportes_generados/:")
+        for formato, ruta in archivos_generados.items():
+            print(f"   - {formato.upper()}: {ruta}")
+        
+        # Mostrar estadísticas de trazabilidad
+        stats = generador.obtener_estadisticas_reportes()
+        print(f"\n📊 Estadísticas de Reportes:")
+        print(f"   - Total archivos: {stats['total_archivos']}")
+        print(f"   - Fechas disponibles: {stats['total_fechas']}")
+        print(f"   - Por tipo: PDF={stats['tipos']['pdf']}, Word={stats['tipos']['word']}, HTML={stats['tipos']['html']}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error al generar reportes: {e}")
+        return False
+
+def listar_reportes():
+    """Lista todos los reportes generados con trazabilidad"""
+    print("📋 Listando reportes generados...")
+    
+    try:
+        from src.reportes import GeneradorReportes
+        import pandas as pd
+        
+        # Crear un generador temporal para acceder a las funciones de listado
+        generador = GeneradorReportes(pd.DataFrame(), pd.DataFrame())
+        
+        # Obtener estadísticas
+        stats = generador.obtener_estadisticas_reportes()
+        
+        if stats['total_archivos'] == 0:
+            print("📭 No se encontraron reportes generados")
+            return True
+        
+        print(f"📊 Estadísticas Generales:")
+        print(f"   - Total archivos: {stats['total_archivos']}")
+        print(f"   - Fechas disponibles: {stats['total_fechas']}")
+        print(f"   - Por tipo: PDF={stats['tipos']['pdf']}, Word={stats['tipos']['word']}, HTML={stats['tipos']['html']}")
+        
+        print(f"\n📁 Reportes por Fecha:")
+        reportes = generador.listar_reportes_generados()
+        
+        for fecha, archivos in reportes.items():
+            print(f"\n📅 {fecha}:")
+            for archivo in archivos:
+                # Extraer solo el nombre del archivo y tipo
+                nombre_archivo = os.path.basename(archivo)
+                tipo = os.path.dirname(archivo).split(os.sep)[-1]
+                print(f"   📄 {tipo.upper()}: {nombre_archivo}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error al listar reportes: {e}")
+        return False
+
 def mostrar_ayuda():
     """Muestra información de ayuda"""
     print("""
@@ -147,15 +248,17 @@ def mostrar_ayuda():
 ===============================================
 
 Este proyecto te permite analizar series temporales desde archivos Excel 
-con múltiples opciones de visualización.
+con múltiples opciones de visualización y generación de reportes automáticos.
 
 📁 Estructura del Proyecto:
 ├── src/                    # Código fuente
+│   └── reportes/          # Sistema de reportes
 ├── data/
 │   ├── raw/               # Datos originales (coloca aquí tu Excel)
 │   └── processed/         # Datos procesados
 ├── notebooks/             # Jupyter notebooks
 ├── visualizations/        # Dashboard web
+├── reportes_generados/    # Reportes automáticos
 └── requirements.txt       # Dependencias
 
 🚀 Modos de Ejecución:
@@ -169,8 +272,21 @@ con múltiples opciones de visualización.
 3. Jupyter Notebook:
    python main.py --modo notebook
    
-4. Análisis Completo + Dashboard:
+4. Generar Reportes:
+   python main.py --modo reportes
+   
+5. Listar Reportes Generados:
+   python main.py --modo listar-reportes
+   
+6. Análisis Completo + Dashboard:
    python main.py --modo completo
+
+📊 Funcionalidades de Reportes:
+- Generación automática de PDF, Word y HTML
+- Gráficos embebidos y estadísticas detalladas
+- Templates personalizables
+- Exportación desde dashboard web
+- Metadatos completos de las series
 
 📋 Requisitos:
 - Archivo 'Datos_Series_Leo.xlsx' en data/raw/
@@ -178,9 +294,10 @@ con múltiples opciones de visualización.
 - pip install -r requirements.txt
 
 💡 Recomendaciones:
+- Usa 'reportes' para generar documentación automática
 - Usa 'completo' para análisis completo con visualizaciones
 - Usa 'notebook' para análisis interactivo y exploración
-- Usa 'dashboard' para presentaciones y demos
+- Usa 'dashboard' para presentaciones y demos con exportación
 """)
 
 def main():
@@ -190,7 +307,7 @@ def main():
     )
     parser.add_argument(
         '--modo', 
-        choices=['analisis', 'dashboard', 'notebook', 'completo', 'help'],
+        choices=['analisis', 'dashboard', 'notebook', 'reportes', 'listar-reportes', 'completo', 'help'],
         default='help',
         help='Modo de ejecución'
     )
@@ -221,6 +338,12 @@ def main():
         
     elif args.modo == 'notebook':
         abrir_notebook()
+        
+    elif args.modo == 'reportes':
+        generar_reportes()
+        
+    elif args.modo == 'listar-reportes':
+        listar_reportes()
         
     elif args.modo == 'completo':
         if ejecutar_analisis():

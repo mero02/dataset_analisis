@@ -15,12 +15,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import dash
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, State
 import dash_bootstrap_components as dbc
 
 # Cargar módulos del proyecto
 from src.analizar_series import construir_modelo
 from src.utils import limpiar_dataframe
+from src.reportes import GeneradorReportes
 
 # Configuración global
 ARCHIVO_EXCEL = 'data/raw/Datos_Series_Leo.xlsx'
@@ -108,7 +109,7 @@ class SeriesTemporalesDashboard:
                         value=self.datos['tipo'].unique()[0],
                         clearable=False
                     )
-                ], width=4),
+                ], width=3),
                 dbc.Col([
                     html.Label("Seleccionar Categoría:", className="fw-bold"),
                     dcc.Dropdown(
@@ -117,7 +118,7 @@ class SeriesTemporalesDashboard:
                         value=self.datos['categoria'].unique()[0],
                         clearable=False
                     )
-                ], width=4),
+                ], width=3),
                 dbc.Col([
                     html.Label("Rango de Fechas:", className="fw-bold"),
                     dcc.DatePickerRange(
@@ -126,8 +127,24 @@ class SeriesTemporalesDashboard:
                         end_date=self.datos['fecha'].max(),
                         display_format='DD/MM/YYYY'
                     )
-                ], width=4)
-            ], className="mb-4")
+                ], width=3),
+                dbc.Col([
+                    html.Label("Exportar Reporte:", className="fw-bold"),
+                    dbc.ButtonGroup([
+                        dbc.Button("📄 PDF", id="btn-pdf", color="danger", size="sm"),
+                        dbc.Button("📝 Word", id="btn-word", color="primary", size="sm"),
+                        dbc.Button("🌐 HTML", id="btn-html", color="success", size="sm"),
+                        dbc.Button("📊 Todos", id="btn-todos", color="warning", size="sm")
+                    ], vertical=False)
+                ], width=3)
+            ], className="mb-4"),
+            
+            # Alertas de exportación
+            dbc.Row([
+                dbc.Col([
+                    dbc.Alert(id="alert-exportacion", is_open=False, duration=4000)
+                ], width=12)
+            ], className="mb-3")
         ])
         
         # Métricas principales
@@ -282,6 +299,61 @@ class SeriesTemporalesDashboard:
             )
             
             return fig_temporal, fig_tipos, fig_cats, fig_box, fig_corr
+        
+        # Callback para exportación de reportes
+        @self.app.callback(
+            Output('alert-exportacion', 'children'),
+            Output('alert-exportacion', 'is_open'),
+            Output('alert-exportacion', 'color'),
+            [Input('btn-pdf', 'n_clicks'),
+             Input('btn-word', 'n_clicks'),
+             Input('btn-html', 'n_clicks'),
+             Input('btn-todos', 'n_clicks')],
+            prevent_initial_call=True
+        )
+        def exportar_reporte(btn_pdf, btn_word, btn_html, btn_todos):
+            ctx = dash.callback_context
+            if not ctx.triggered:
+                return "", False, "info"
+            
+            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+            
+            try:
+                # Inicializar generador de reportes
+                generador = GeneradorReportes(self.datos, self.metadatos)
+                
+                if button_id == 'btn-pdf':
+                    ruta = generador.generar_pdf()
+                    mensaje = f"✅ Reporte PDF generado: {ruta}"
+                    color = "success"
+                    
+                elif button_id == 'btn-word':
+                    ruta = generador.generar_word()
+                    mensaje = f"✅ Reporte Word generado: {ruta}"
+                    color = "success"
+                    
+                elif button_id == 'btn-html':
+                    ruta = generador.generar_html()
+                    mensaje = f"✅ Reporte HTML generado: {ruta}"
+                    color = "success"
+                    
+                elif button_id == 'btn-todos':
+                    archivos = generador.generar_todos_formatos()
+                    mensaje = f"✅ Reportes generados: {len(archivos)} archivos creados"
+                    color = "success"
+                else:
+                    mensaje = "❌ Botón no reconocido"
+                    color = "danger"
+                
+                # Mostrar estadísticas de reportes
+                stats = generador.obtener_estadisticas_reportes()
+                mensaje += f" | Total reportes: {stats['total_archivos']} en {stats['total_fechas']} fechas"
+                
+                return mensaje, True, color
+                
+            except Exception as e:
+                mensaje = f"❌ Error al generar reporte: {str(e)}"
+                return mensaje, True, "danger"
     
     def run(self, debug=True, host='127.0.0.1', port=8050):
         """Ejecuta la aplicación"""

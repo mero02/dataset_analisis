@@ -1,209 +1,260 @@
 # 🔬 Análisis de Series Temporales
 
-Sistema completo para el análisis y visualización de series temporales desde archivos Excel, con múltiples opciones de exploración interactiva.
+Sistema completo de análisis de series temporales con visualización interactiva y generación automática de reportes en múltiples formatos.
 
-## 🌟 Características
+## 🚀 Características Principales
 
-- **📊 Análisis Exploratorio**: Procesamiento automático de datos desde Excel
-- **🎨 Visualizaciones Interactivas**: Gráficos dinámicos con Plotly
-- **🚀 Dashboard Web**: Interfaz web para exploración en tiempo real
-- **📓 Jupyter Notebooks**: Análisis interactivo paso a paso
-- **📁 Estructura Organizada**: Proyecto bien estructurado y modular
+- **📊 Análisis Exploratorio**: Análisis completo de series temporales desde archivos Excel
+- **📈 Visualizaciones Interactivas**: Dashboard web con gráficos dinámicos
+- **📄 Reportes Automáticos**: Generación de PDF, Word y HTML con gráficos embebidos
+- **🎯 Trazabilidad Completa**: Organización automática de reportes por fecha y tipo
+- **🔧 Arquitectura Modular**: Código organizado y mantenible
+- **📋 Sistema de Pruebas**: Pruebas unitarias y de integración
 
 ## 📁 Estructura del Proyecto
 
 ```
-dataset_analisis/
-├── src/                           # Código fuente
-│   ├── __init__.py               # Inicialización del paquete
-│   ├── analizar_series.py        # Carga y análisis de datos
-│   ├── generar_dataframe_categorias.py  # Agrupación por categorías
-│   └── utils.py                  # Utilidades de limpieza
-├── data/
-│   ├── raw/                      # Datos originales (Excel)
-│   └── processed/                # Datos procesados (CSV)
-├── notebooks/
-│   └── analisis_exploratorio.ipynb  # Notebook principal
-├── visualizations/
-│   └── dashboard.py              # Dashboard web interactivo
-├── main.py                       # Script principal
-├── requirements.txt              # Dependencias
-└── README.md                     # Esta documentación
+analisis_datos/
+├── 📁 src/                          # Código fuente principal
+│   ├── 📁 reportes/                 # Sistema de reportes automáticos
+│   ├── analizar_series.py           # Análisis de series temporales
+│   ├── config.py                    # Configuración global
+│   └── utils.py                     # Utilidades generales
+├── 📁 tests/                        # Pruebas unitarias
+├── 📁 scripts/                      # Scripts de utilidad
+├── 📁 docs/                         # Documentación técnica
+├── 📁 data/                         # Datos del proyecto
+├── 📁 notebooks/                    # Jupyter notebooks
+├── 📁 visualizations/               # Dashboard web
+└── 📁 reportes_generados/           # Reportes organizados por fecha
 ```
 
-## 🚀 Instalación y Configuración
+## 🛠️ Instalación
 
-### 1. Instalar Dependencias
+### Requisitos Previos
+- Python 3.8 o superior
+- pip (gestor de paquetes de Python)
 
+### Instalación Rápida
 ```bash
+# Clonar el repositorio
+git clone <url-del-repositorio>
+cd analisis_datos
+
+# Instalar dependencias
+pip install -e .
 pip install -r requirements.txt
 ```
 
-### 2. Preparar Datos
-
-Coloca tu archivo `Datos_Series_Leo.xlsx` en la carpeta `data/raw/`
-
-### 3. Verificar Instalación
-
+### Instalación para Desarrollo
 ```bash
-python main.py --modo help
+# Instalar con dependencias de desarrollo
+pip install -e ".[dev]"
+
+# Configurar entorno completo
+pip install -e ".[dev]"
+black src/ tests/ main.py
+flake8 src/ tests/ main.py
+mypy src/ tests/ main.py
+python -m pytest tests/ -v
 ```
 
-## 💡 Modos de Uso
+## 🚀 Uso Rápido
 
-### 🔍 Análisis Básico
-Ejecuta el procesamiento y genera resúmenes CSV:
+### Comandos Principales
 ```bash
+# Dashboard web interactivo
+python main.py --modo dashboard
+
+# Jupyter notebook para análisis
+python main.py --modo notebook
+
+# Generar reportes automáticos
+python main.py --modo reportes
+
+# Listar reportes generados
+python main.py --modo listar-reportes
+```
+
+### Comandos Alternativos
+```bash
+# Ejecutar dashboard directamente
+python visualizations/dashboard.py
+
+# Abrir Jupyter Lab
+jupyter lab notebooks/
+
+# Ejecutar análisis básico
 python main.py --modo analisis
 ```
 
-### 🚀 Dashboard Web Interactivo
-Lanza una aplicación web con visualizaciones dinámicas:
+## 📊 Funcionalidades
+
+### 1. Análisis de Series Temporales
+- Carga automática desde archivos Excel
+- Limpieza y validación de datos
+- Análisis estadístico completo
+- Detección de patrones y tendencias
+
+### 2. Dashboard Web Interactivo
+- Filtros dinámicos por tipo y categoría
+- Gráficos interactivos con Plotly
+- Exportación directa de reportes
+- Interfaz responsive y moderna
+
+### 3. Sistema de Reportes Automáticos
+- **📄 HTML**: Reportes web con gráficos interactivos
+- **📝 Word**: Documentos editables con tablas y estadísticas
+- **📋 PDF**: Reportes profesionales (limitado en Windows)
+- **🎯 Trazabilidad**: Organización automática por fecha
+
+### 4. Notebooks de Análisis
+- Análisis exploratorio interactivo
+- Experimentación con diferentes técnicas
+- Documentación de hallazgos
+
+## 📋 Formato de Datos
+
+### Estructura del Excel
+El archivo Excel debe tener la siguiente estructura:
+
+| Fecha Inicio | Tipo | Categoría | Unidad | Fecha Fin |
+|--------------|------|-----------|--------|-----------|
+| 2020-01-01   | Población | PIB | Millones | 2023-12-31 |
+| ...          | ...  | ...       | ...    | ...       |
+
+**Datos de Series:**
+| Fecha | Valor |
+|-------|-------|
+| 2020-01-01 | 100.5 |
+| 2020-01-02 | 101.2 |
+| ... | ... |
+
+## 🔧 Desarrollo
+
+### Comandos de Desarrollo
 ```bash
-python main.py --modo dashboard
-```
-Abre tu navegador en `http://localhost:8050`
+# Ejecutar pruebas
+python -m pytest tests/ -v
 
-### 📓 Jupyter Notebook
-Abre el notebook para análisis interactivo:
+# Formatear código
+black src/ tests/ main.py
+
+# Verificar calidad
+flake8 src/ tests/ main.py
+mypy src/ tests/ main.py
+python -m pytest tests/ -v
+
+# Limpiar archivos temporales
+find . -type f -name "*.pyc" -delete
+find . -type d -name "__pycache__" -delete
+find . -type d -name "*.egg-info" -exec rm -rf {} +
+rm -rf build/ dist/ .pytest_cache/ .coverage htmlcov/
+```
+
+### Estructura de Pruebas
 ```bash
-python main.py --modo notebook
+# Ejecutar todas las pruebas
+python -m pytest tests/ -v
+
+# Pruebas con cobertura
+python -m pytest tests/ --cov=src --cov-report=html --cov-report=term-missing
+
+# Pruebas específicas
+python -m pytest tests/test_reportes.py -v
 ```
 
-### ⚡ Análisis Completo
-Ejecuta análisis + dashboard:
+## 📈 Generación de Reportes
+
+### Desde el Dashboard
+1. Ejecutar `python main.py --modo dashboard`
+2. Abrir http://localhost:8050
+3. Usar los botones de exportación en la interfaz
+
+### Desde Línea de Comandos
 ```bash
-python main.py --modo completo
+# Generar todos los formatos
+python main.py --modo reportes
+
+# Ver reportes generados
+python main.py --modo listar-reportes
 ```
 
-## 📊 Formato del Archivo Excel
-
-Cada hoja debe seguir esta estructura:
-
-| Fila | Contenido              |
-|------|------------------------|
-| 2    | Fecha de inicio        |
-| 3    | Tipo                   |
-| 4    | Categoría              |
-| 5    | Unidad de medida       |
-| 6    | Fecha de fin           |
-| 7+   | Fechas y valores       |
-
-## 🎯 Funcionalidades del Dashboard
-
-- **Filtros Interactivos**: Por tipo, categoría y rango de fechas
-- **Métricas en Tiempo Real**: Contadores dinámicos
-- **Visualizaciones Múltiples**:
-  - Series temporales por tipo
-  - Distribución por categorías
-  - Box plots de valores
-  - Matrices de correlación
-- **Interfaz Responsiva**: Compatible con dispositivos móviles
-
-## 📈 Visualizaciones Incluidas
-
-### En Jupyter Notebook:
-- Análisis exploratorio completo
-- Gráficos de distribución temporal
-- Heatmaps de correlación
-- Análisis estadístico avanzado
-
-### En Dashboard Web:
-- Gráficos interactivos con zoom y pan
-- Filtros dinámicos
-- Métricas en tiempo real
-- Exportación de gráficos
-
-## 🛠️ Tecnologías Utilizadas
-
-- **Análisis de Datos**: Pandas, NumPy
-- **Visualización**: Plotly, Matplotlib, Seaborn
-- **Dashboard Web**: Dash, Dash Bootstrap Components
-- **Notebooks**: Jupyter Lab
-- **Procesamiento**: openpyxl para Excel
-
-## 📋 Dependencias
-
+### Estructura de Reportes
 ```
-pandas>=1.3.0          # Manipulación de datos
-matplotlib>=3.5.0       # Gráficos estáticos
-seaborn>=0.11.0        # Visualizaciones estadísticas
-plotly>=5.0.0          # Gráficos interactivos
-jupyter>=1.0.0         # Notebooks
-ipywidgets>=7.6.0      # Widgets interactivos
-openpyxl>=3.0.0        # Lectura de Excel
-numpy>=1.21.0          # Computación numérica
-scipy>=1.7.0           # Análisis científico
-dash>=2.0.0            # Framework web
-dash-bootstrap-components>=1.0.0  # Componentes UI
+reportes_generados/
+├── 2025-07-30/
+│   ├── html/
+│   │   └── reporte_series_temporales_20250730_131342.html
+│   ├── word/
+│   │   └── reporte_series_temporales_20250730_131342.docx
+│   └── pdf/
+└── [fechas anteriores]/
 ```
 
-## 🔧 Uso Avanzado
+## 🎯 Casos de Uso
 
-### Ejecutar Solo el Dashboard
-```python
-from visualizations.dashboard import SeriesTemporalesDashboard
-dashboard = SeriesTemporalesDashboard()
-dashboard.run()
-```
+### Para Analistas de Datos
+- Análisis exploratorio rápido
+- Generación automática de reportes
+- Visualización interactiva de resultados
 
-### Importar Módulos
-```python
-from src.analizar_series import construir_modelo
-from src.utils import limpiar_dataframe
+### Para Presentaciones
+- Dashboard web para demos
+- Reportes profesionales en múltiples formatos
+- Gráficos de alta calidad
 
-metadatos, datos = construir_modelo('data/raw/tu_archivo.xlsx')
-datos_limpios = limpiar_dataframe(datos)
-```
+### Para Desarrollo
+- Código modular y mantenible
+- Sistema de pruebas completo
+- Documentación técnica detallada
 
-## 🎨 Personalización
+## 🔍 Troubleshooting
 
-### Cambiar Colores del Dashboard
-Edita `visualizations/dashboard.py` y modifica:
-```python
-external_stylesheets=[dbc.themes.BOOTSTRAP]  # Cambiar tema
-```
+### Problemas Comunes
 
-### Agregar Nuevas Visualizaciones
-1. Crea nuevas funciones en `dashboard.py`
-2. Añade callbacks para interactividad
-3. Incluye en el layout
-
-## 🐛 Resolución de Problemas
-
-### Error: "No se encontró el archivo"
-- Verifica que `Datos_Series_Leo.xlsx` esté en `data/raw/`
-- Verifica que el formato del Excel sea correcto
-
-### Error de Dependencias
+**Error con WeasyPrint en Windows:**
 ```bash
-pip install -r requirements.txt --upgrade
+# Los reportes PDF pueden fallar en Windows
+# Los reportes HTML y Word funcionan perfectamente
 ```
 
-### Puerto Ocupado (Dashboard)
-```python
-dashboard.run(port=8051)  # Cambia el puerto
+**Dependencias faltantes:**
+```bash
+# Reinstalar dependencias
+pip install -e .
+pip install -r requirements.txt
 ```
 
-## 📞 Soporte
+**Archivo Excel no encontrado:**
+```bash
+# Colocar el archivo en data/raw/Datos_Series_Leo.xlsx
+```
 
-Para reportar problemas o sugerir mejoras:
-1. Verifica que el archivo Excel tenga el formato correcto
-2. Ejecuta `python main.py --modo help` para ver opciones
-3. Revisa que todas las dependencias estén instaladas
+## 📚 Documentación Adicional
 
-## 🎯 Roadmap
+- [Estructura del Proyecto](docs/ESTRUCTURA_PROYECTO.md)
+- [Guía de Desarrollo](docs/README_GITHUB.md)
+- [API de Reportes](src/reportes/)
 
-- [ ] Exportación de reportes PDF
-- [ ] Análisis de estacionalidad
-- [ ] Predicciones básicas
-- [ ] API REST para integración
-- [ ] Autenticación de usuarios
+## 🤝 Contribución
 
-## 📝 Licencia
+1. Fork el proyecto
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
 
-Este proyecto está bajo licencia MIT. Consulta el archivo LICENSE para más detalles.
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 🆘 Soporte
+
+- **Issues**: Reportar bugs y solicitar features
+- **Documentación**: Ver `docs/` para guías detalladas
+- **Ejemplos**: Ver `notebooks/` para casos de uso
 
 ---
 
-**¡Disfruta analizando tus series temporales! 📊✨**
+**🎉 ¡Gracias por usar nuestro sistema de análisis de series temporales!**
