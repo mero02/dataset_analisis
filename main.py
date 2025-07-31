@@ -113,15 +113,20 @@ def ejecutar_analisis():
         return False
 
 def lanzar_dashboard():
-    """Lanza el dashboard web interactivo"""
-    print("🚀 Lanzando dashboard web...")
+    """Lanza el dashboard web interactivo modular"""
+    print("🚀 Lanzando dashboard web modular...")
     
     try:
-        from visualizations.dashboard import SeriesTemporalesDashboard
+        from visualizations.dashboard_modular import SeriesTemporalesDashboard
+        print("📊 Dashboard modular iniciado")
         
         dashboard = SeriesTemporalesDashboard()
         dashboard.run(debug=False)
         
+    except ImportError:
+        print("❌ Error: Dashboard modular no disponible")
+        print("   Asegúrate de que todos los archivos del dashboard modular estén presentes")
+        return False
     except Exception as e:
         print(f"❌ Error al lanzar dashboard: {e}")
         return False
@@ -257,7 +262,10 @@ con múltiples opciones de visualización y generación de reportes automáticos
 │   ├── raw/               # Datos originales (coloca aquí tu Excel)
 │   └── processed/         # Datos procesados
 ├── notebooks/             # Jupyter notebooks
-├── visualizations/        # Dashboard web
+├── visualizations/        # Dashboard web modular
+│   ├── components/        # Componentes reutilizables
+│   ├── callbacks/         # Lógica de interactividad
+│   └── utils/            # Utilidades
 ├── reportes_generados/    # Reportes automáticos
 └── requirements.txt       # Dependencias
 
@@ -287,6 +295,12 @@ con múltiples opciones de visualización y generación de reportes automáticos
 - Templates personalizables
 - Exportación desde dashboard web
 - Metadatos completos de las series
+
+🎯 Dashboard Modular:
+- Arquitectura modular y mantenible
+- Componentes reutilizables
+- Callbacks organizados por funcionalidad
+- Fácil escalabilidad y debugging
 
 📋 Requisitos:
 - Archivo 'Datos_Series_Leo.xlsx' en data/raw/

@@ -1,6 +1,6 @@
 import pandas as pd
-from .analizar_series import construir_modelo
-from .utils import limpiar_dataframe
+from src.analizar_series import construir_modelo
+from src.utils import limpiar_dataframe
 import matplotlib.pyplot as plt
 
 def generar_dataframes_categorias(metadatos, datos):
