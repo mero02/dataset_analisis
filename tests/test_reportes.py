@@ -37,10 +37,13 @@ def test_dependencias():
     
     dependencias = [
         'jinja2',
-        'weasyprint', 
         'python-docx',
         'kaleido'
     ]
+    
+    # WeasyPrint es opcional en Windows debido a dependencias del sistema
+    if os.name != 'nt':  # No Windows
+        dependencias.append('weasyprint')
     
     faltantes = []
     for dep in dependencias:
@@ -54,9 +57,9 @@ def test_dependencias():
     if faltantes:
         print(f"\n⚠️ Dependencias faltantes: {', '.join(faltantes)}")
         print("Instálalas con: pip install -r requirements.txt")
-        return False
+        assert False, f"Dependencias faltantes: {', '.join(faltantes)}"
     
-    return True
+    print("🎉 Todas las dependencias están instaladas")
 
 def test_generacion_datos_ejemplo():
     """Genera datos de ejemplo para las pruebas"""
